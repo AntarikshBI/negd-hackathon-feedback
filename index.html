@@ -209,7 +209,13 @@
       &#128274; <strong>No login required.</strong> This form is completely anonymous. Your honest feedback helps us improve future events.
     </div>
 
-    <form id="feedbackForm" onsubmit="return handleSubmit(event)">
+    <form id="feedbackForm" action="https://formsubmit.co/ashahwal@microsoft.com" method="POST">
+      <!-- FormSubmit config -->
+      <input type="hidden" name="_subject" value="New Hackathon Feedback Submission">
+      <input type="hidden" name="_captcha" value="true">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="https://antarikshbi.github.io/negd-hackathon-feedback/thankyou.html">
+      <input type="text" name="_honey" style="display:none">
 
       <!-- ─── SECTION 1: Overall Experience ─── -->
       <fieldset>
@@ -403,48 +409,10 @@
 <div class="toast" id="toast">&#10004; Thank you! Your feedback has been recorded.</div>
 
 <script>
-function handleSubmit(e) {
-  e.preventDefault();
-  const form = document.getElementById('feedbackForm');
-  const fd = new FormData(form);
-  const data = {};
-
-  // Collect all form values
-  for (const [key, val] of fd.entries()) {
-    if (data[key]) {
-      // multiple values (checkboxes)
-      if (Array.isArray(data[key])) data[key].push(val);
-      else data[key] = [data[key], val];
-    } else {
-      data[key] = val;
-    }
-  }
-
-  data['submitted_at'] = new Date().toISOString();
-
-  // Download response as JSON
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'feedback_' + new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  // Show toast
-  const toast = document.getElementById('toast');
-  toast.style.display = 'block';
-  setTimeout(() => { toast.style.display = 'none'; }, 4000);
-
-  // Reset form
-  form.reset();
-  document.getElementById('npsVal').textContent = '7';
-  document.getElementById('nps').value = 7;
-
-  return false;
-}
+// NPS slider display update
+document.getElementById('nps').addEventListener('input', function() {
+  document.getElementById('npsVal').textContent = this.value;
+});
 </script>
 </body>
 </html>
