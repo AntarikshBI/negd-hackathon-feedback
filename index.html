@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hackathon Feedback — Microsoft Fabric Data Engineering</title>
+<style>
+  :root {
+    --ms-blue: #0078d4;
+    --ms-dark: #1b1b1b;
+    --ms-gray: #f3f2f1;
+    --ms-border: #e1dfdd;
+    --ms-green: #107c10;
+    --ms-red: #d13438;
+    --radius: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #e8f0fe 0%, #f3f2f1 100%);
+    color: var(--ms-dark);
+    min-height: 100vh;
+    padding: 24px 12px;
+  }
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .banner {
+    background: linear-gradient(135deg, var(--ms-blue), #005a9e);
+    color: #fff;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 36px 32px 28px;
+    text-align: center;
+  }
+  .banner h1 { font-size: 1.65rem; font-weight: 600; margin-bottom: 6px; }
+  .banner p { font-size: 0.95rem; opacity: 0.9; }
+  .card {
+    background: #fff;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 32px;
+  }
+  .note {
+    background: #f0f6ff;
+    border-left: 4px solid var(--ms-blue);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 28px;
+    font-size: 0.88rem;
+    color: #333;
+  }
+  fieldset {
+    border: none;
+    margin-bottom: 28px;
+  }
+  legend {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ms-blue);
+    margin-bottom: 14px;
+    display: block;
+    width: 100%;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--ms-gray);
+  }
+  .field { margin-bottom: 18px; }
+  label.q {
+    display: block;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 6px;
+  }
+  label.q .req { color: var(--ms-red); margin-left: 2px; }
+
+  /* Star rating */
+  .stars { display: flex; gap: 4px; flex-direction: row-reverse; justify-content: flex-end; }
+  .stars input { display: none; }
+  .stars label {
+    font-size: 1.6rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.15s;
+    user-select: none;
+  }
+  .stars input:checked ~ label,
+  .stars label:hover,
+  .stars label:hover ~ label { color: #f5a623; }
+
+  /* Radio pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pills input { display: none; }
+  .pills label {
+    padding: 7px 16px;
+    border: 1.5px solid var(--ms-border);
+    border-radius: 20px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pills input:checked + label {
+    background: var(--ms-blue);
+    color: #fff;
+    border-color: var(--ms-blue);
+  }
+  .pills label:hover { border-color: var(--ms-blue); }
+
+  /* Checkbox pills */
+  .check-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-pills input { display: none; }
+  .check-pills label {
+    padding: 7px 16px;
+    border: 1.5px solid var(--ms-border);
+    border-radius: 20px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .check-pills input:checked + label {
+    background: #e0f0e0;
+    color: var(--ms-green);
+    border-color: var(--ms-green);
+    font-weight: 600;
+  }
+  .check-pills label:hover { border-color: var(--ms-blue); }
+
+  /* Slider / range */
+  .range-wrap { display: flex; align-items: center; gap: 12px; }
+  .range-wrap input[type=range] {
+    flex: 1;
+    accent-color: var(--ms-blue);
+    height: 6px;
+  }
+  .range-val {
+    min-width: 36px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--ms-blue);
+  }
+  .range-labels { display: flex; justify-content: space-between; font-size: 0.78rem; color: #888; margin-top: 2px; }
+
+  /* Text inputs */
+  input[type=text], input[type=email], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--ms-border);
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    background: #fff;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--ms-blue); box-shadow: 0 0 0 2px rgba(0,120,212,0.15); }
+  textarea { min-height: 80px; resize: vertical; }
+
+  /* Submit */
+  .actions { text-align: center; margin-top: 8px; }
+  .btn-submit {
+    background: var(--ms-blue);
+    color: #fff;
+    border: none;
+    padding: 13px 48px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-submit:hover { background: #005a9e; }
+  .btn-submit:active { transform: scale(0.97); }
+
+  /* Toast */
+  .toast {
+    display: none;
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ms-green);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    z-index: 999;
+    animation: fadeUp 0.35s ease;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+  /* Responsive */
+  @media (max-width: 500px) {
+    .banner { padding: 24px 18px 20px; }
+    .banner h1 { font-size: 1.3rem; }
+    .card { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="banner">
+    <h1>&#127942; Hackathon Feedback</h1>
+    <p>Microsoft Fabric — Data Engineering Workshop &amp; Hackathon</p>
+  </div>
+
+  <div class="card">
+    <div class="note">
+      &#128274; <strong>No login required.</strong> This form is completely anonymous. Your honest feedback helps us improve future events.
+    </div>
+
+    <form id="feedbackForm" onsubmit="return handleSubmit(event)">
+
+      <!-- ─── SECTION 1: Overall Experience ─── -->
+      <fieldset>
+        <legend>1 &nbsp;&#9733; Overall Experience</legend>
+
+        <div class="field">
+          <label class="q">How would you rate the overall hackathon experience? <span class="req">*</span></label>
+          <div class="stars">
+            <input type="radio" id="s5" name="overall_rating" value="5" required><label for="s5">&#9733;</label>
+            <input type="radio" id="s4" name="overall_rating" value="4"><label for="s4">&#9733;</label>
+            <input type="radio" id="s3" name="overall_rating" value="3"><label for="s3">&#9733;</label>
+            <input type="radio" id="s2" name="overall_rating" value="2"><label for="s2">&#9733;</label>
+            <input type="radio" id="s1" name="overall_rating" value="1"><label for="s1">&#9733;</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q">How likely are you to recommend this hackathon to a colleague? <span class="req">*</span></label>
+          <div class="range-wrap">
+            <span style="font-size:0.82rem">Not likely</span>
+            <input type="range" id="nps" name="nps_score" min="0" max="10" value="7" oninput="document.getElementById('npsVal').textContent=this.value">
+            <span style="font-size:0.82rem">Extremely likely</span>
+            <span class="range-val" id="npsVal">7</span>
+          </div>
+          <div class="range-labels"><span>0</span><span>5</span><span>10</span></div>
+        </div>
+      </fieldset>
+
+      <!-- ─── SECTION 2: Content & Sessions ─── -->
+      <fieldset>
+        <legend>2 &nbsp;&#128218; Content &amp; Sessions</legend>
+
+        <div class="field">
+          <label class="q">Rate the quality of training content &amp; notebooks <span class="req">*</span></label>
+          <div class="pills">
+            <input type="radio" id="cq1" name="content_quality" value="Excellent" required><label for="cq1">Excellent</label>
+            <input type="radio" id="cq2" name="content_quality" value="Good"><label for="cq2">Good</label>
+            <input type="radio" id="cq3" name="content_quality" value="Average"><label for="cq3">Average</label>
+            <input type="radio" id="cq4" name="content_quality" value="Below Average"><label for="cq4">Below Average</label>
+            <input type="radio" id="cq5" name="content_quality" value="Poor"><label for="cq5">Poor</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q">How was the difficulty level of the challenges?</label>
+          <div class="pills">
+            <input type="radio" id="dl1" name="difficulty_level" value="Too Easy"><label for="dl1">Too Easy</label>
+            <input type="radio" id="dl2" name="difficulty_level" value="Just Right"><label for="dl2">Just Right</label>
+            <input type="radio" id="dl3" name="difficulty_level" value="Slightly Hard"><label for="dl3">Slightly Hard</label>
+            <input type="radio" id="dl4" name="difficulty_level" value="Too Difficult"><label for="dl4">Too Difficult</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q">Which sessions were most valuable? (select all that apply)</label>
+          <div class="check-pills">
+            <input type="checkbox" id="sv1" name="valuable_sessions" value="Silver Transform"><label for="sv1">Silver Transform</label>
+            <input type="checkbox" id="sv2" name="valuable_sessions" value="Gold Aggregations"><label for="sv2">Gold Aggregations</label>
+            <input type="checkbox" id="sv3" name="valuable_sessions" value="Gold Dimensions"><label for="sv3">Gold Dimensions</label>
+            <input type="checkbox" id="sv4" name="valuable_sessions" value="Fact Trips"><label for="sv4">Fact Trips</label>
+            <input type="checkbox" id="sv5" name="valuable_sessions" value="Data Agents Workshop"><label for="sv5">Data Agents Workshop</label>
+            <input type="checkbox" id="sv6" name="valuable_sessions" value="Challenge Round"><label for="sv6">Challenge Round</label>
+            <input type="checkbox" id="sv7" name="valuable_sessions" value="Metadata Framework"><label for="sv7">Metadata Framework</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ─── SECTION 3: Microsoft Fabric ─── -->
+      <fieldset>
+        <legend>3 &nbsp;&#9889; Microsoft Fabric</legend>
+
+        <div class="field">
+          <label class="q">How would you rate your confidence in using Microsoft Fabric <strong>before</strong> this event?</label>
+          <div class="pills">
+            <input type="radio" id="cb1" name="confidence_before" value="1 - No exposure"><label for="cb1">1 — No exposure</label>
+            <input type="radio" id="cb2" name="confidence_before" value="2 - Aware"><label for="cb2">2 — Aware</label>
+            <input type="radio" id="cb3" name="confidence_before" value="3 - Some hands-on"><label for="cb3">3 — Some hands-on</label>
+            <input type="radio" id="cb4" name="confidence_before" value="4 - Comfortable"><label for="cb4">4 — Comfortable</label>
+            <input type="radio" id="cb5" name="confidence_before" value="5 - Expert"><label for="cb5">5 — Expert</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q">How would you rate your confidence in using Microsoft Fabric <strong>after</strong> this event?</label>
+          <div class="pills">
+            <input type="radio" id="ca1" name="confidence_after" value="1 - No exposure"><label for="ca1">1 — No exposure</label>
+            <input type="radio" id="ca2" name="confidence_after" value="2 - Aware"><label for="ca2">2 — Aware</label>
+            <input type="radio" id="ca3" name="confidence_after" value="3 - Some hands-on"><label for="ca3">3 — Some hands-on</label>
+            <input type="radio" id="ca4" name="confidence_after" value="4 - Comfortable"><label for="ca4">4 — Comfortable</label>
+            <input type="radio" id="ca5" name="confidence_after" value="5 - Expert"><label for="ca5">5 — Expert</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q">Which Fabric capabilities are you most interested in exploring further?</label>
+          <div class="check-pills">
+            <input type="checkbox" id="fc1" name="fabric_interests" value="Lakehouses"><label for="fc1">Lakehouses</label>
+            <input type="checkbox" id="fc2" name="fabric_interests" value="Notebooks / PySpark"><label for="fc2">Notebooks / PySpark</label>
+            <input type="checkbox" id="fc3" name="fabric_interests" value="Data Pipelines"><label for="fc3">Data Pipelines</label>
+            <input type="checkbox" id="fc4" name="fabric_interests" value="Dataflows Gen2"><label for="fc4">Dataflows Gen2</label>
+            <input type="checkbox" id="fc5" name="fabric_interests" value="Power BI / Direct Lake"><label for="fc5">Power BI / Direct Lake</label>
+            <input type="checkbox" id="fc6" name="fabric_interests" value="Data Agents / AI"><label for="fc6">Data Agents / AI</label>
+            <input type="checkbox" id="fc7" name="fabric_interests" value="Real-Time Intelligence"><label for="fc7">Real-Time Intelligence</label>
+            <input type="checkbox" id="fc8" name="fabric_interests" value="Data Warehouse"><label for="fc8">Data Warehouse</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ─── SECTION 4: Facilitation & Logistics ─── -->
+      <fieldset>
+        <legend>4 &nbsp;&#128101; Facilitation &amp; Logistics</legend>
+
+        <div class="field">
+          <label class="q">Rate the facilitators / trainers <span class="req">*</span></label>
+          <div class="stars">
+            <input type="radio" id="f5" name="facilitator_rating" value="5" required><label for="f5">&#9733;</label>
+            <input type="radio" id="f4" name="facilitator_rating" value="4"><label for="f4">&#9733;</label>
+            <input type="radio" id="f3" name="facilitator_rating" value="3"><label for="f3">&#9733;</label>
+            <input type="radio" id="f2" name="facilitator_rating" value="2"><label for="f2">&#9733;</label>
+            <input type="radio" id="f1" name="facilitator_rating" value="1"><label for="f1">&#9733;</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q">Was the event duration appropriate?</label>
+          <div class="pills">
+            <input type="radio" id="ed1" name="event_duration" value="Too Short"><label for="ed1">Too Short</label>
+            <input type="radio" id="ed2" name="event_duration" value="Just Right"><label for="ed2">Just Right</label>
+            <input type="radio" id="ed3" name="event_duration" value="Too Long"><label for="ed3">Too Long</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q">How was the pace of the training?</label>
+          <div class="pills">
+            <input type="radio" id="pc1" name="pace" value="Too Slow"><label for="pc1">Too Slow</label>
+            <input type="radio" id="pc2" name="pace" value="Just Right"><label for="pc2">Just Right</label>
+            <input type="radio" id="pc3" name="pace" value="Too Fast"><label for="pc3">Too Fast</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ─── SECTION 5: Open Feedback ─── -->
+      <fieldset>
+        <legend>5 &nbsp;&#128172; Your Thoughts</legend>
+
+        <div class="field">
+          <label class="q">What did you enjoy the most?</label>
+          <textarea name="enjoyed_most" placeholder="Share what stood out for you..."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="q">What could be improved for next time?</label>
+          <textarea name="improvements" placeholder="Any suggestions for improvement..."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="q">Any other comments or suggestions?</label>
+          <textarea name="other_comments" placeholder="Anything else you'd like to share..."></textarea>
+        </div>
+      </fieldset>
+
+      <!-- ─── SECTION 6: Optional Contact ─── -->
+      <fieldset>
+        <legend>6 &nbsp;&#128231; Stay Connected (Optional)</legend>
+        <div class="field">
+          <label class="q">Name</label>
+          <input type="text" name="name" placeholder="Your name (optional)">
+        </div>
+        <div class="field">
+          <label class="q">Email</label>
+          <input type="email" name="email" placeholder="your.email@example.com (optional)">
+        </div>
+        <div class="field">
+          <label class="q">Organization / Department</label>
+          <input type="text" name="organization" placeholder="e.g. NIC, Ministry of Finance...">
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" class="btn-submit">&#128640; Submit Feedback</button>
+      </div>
+    </form>
+  </div>
+
+  <p style="text-align:center;margin-top:16px;font-size:0.78rem;color:#888;">
+    Microsoft Fabric Data Engineering Hackathon &bull; NEGD &bull; 2026
+  </p>
+</div>
+
+<div class="toast" id="toast">&#10004; Thank you! Your feedback has been recorded.</div>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('feedbackForm');
+  const fd = new FormData(form);
+  const data = {};
+
+  // Collect all form values
+  for (const [key, val] of fd.entries()) {
+    if (data[key]) {
+      // multiple values (checkboxes)
+      if (Array.isArray(data[key])) data[key].push(val);
+      else data[key] = [data[key], val];
+    } else {
+      data[key] = val;
+    }
+  }
+
+  data['submitted_at'] = new Date().toISOString();
+
+  // Download response as JSON
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'feedback_' + new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  // Show toast
+  const toast = document.getElementById('toast');
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 4000);
+
+  // Reset form
+  form.reset();
+  document.getElementById('npsVal').textContent = '7';
+  document.getElementById('nps').value = 7;
+
+  return false;
+}
+</script>
+</body>
+</html>
